@@ -185,8 +185,8 @@ export default function Player() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <Head>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center  justify-center ">
+      <Head className="">
         <title>Retro Cassette Player</title>
         <meta
           name="description"
@@ -197,7 +197,7 @@ export default function Player() {
 
       <div id="youtube-player"></div>
 
-      <div className="cassette-player bg-gray-800 rounded-lg p-6 w-full max-w-lg shadow-2xl">
+      <div className="cassette-player min-h-screen bg-gray-800 p-6 w-full max-w-lg shadow-2xl">
         {/* Title & Input */}
         <div className="mb-4">
           <form onSubmit={handleUrlSubmit} className="mb-4">
