@@ -15,6 +15,15 @@ export default function Player() {
   const [title, setTitle] = useState("No Track Loaded");
   const rotateKnobRef = useRef(null);
 
+  // keeps it running in background
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log("Service Worker Registered", reg))
+        .catch(err => console.log("Service Worker Error", err));
+    }
+  }, []);
+
   useEffect(() => {
     // Load YouTube IFrame API
     const tag = document.createElement("script");
@@ -56,8 +65,10 @@ export default function Player() {
       width: "0",
       videoId: videoId,
       playerVars: {
-        playsinline: 1,
-        controls: 0,
+        playsinline: 1, // Allow inline playback
+        controls: 1, // Enable controls for Picture-in-Picture
+        autoplay: 1,
+        enablejsapi: 1, // Enable JavaScript API control
       },
       events: {
         onReady: onPlayerReady,
@@ -67,6 +78,13 @@ export default function Player() {
     });
 
     console.log("After creating player:", playerRef.current);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && playerRef.current) {
+        playerRef.current.playVideo();
+      }
+    });
+    
   };
 
   const onPlayerReady = (event) => {
@@ -223,9 +241,7 @@ export default function Player() {
         </div>
 
         {/* Song name */}
-        <div className="text-xl text-white">
-            {title}
-        </div>
+        <div className="text-xl text-white">{title}</div>
 
         {/* Controls */}
         <div className="controls flex justify-between items-center">
@@ -304,10 +320,10 @@ export default function Player() {
 
           {/* Volume Knob */}
           <div className="volume-control relative">
-            <div className="volume-knob relative w-16 h-16 bg-gray-700 rounded-full border-4 border-gray-600 flex items-center justify-center shadow-lg">
+            <div className="volume-knob relative w-24 h-24 bg-gray-700 rounded-full border-4 border-gray-600 flex items-center justify-center shadow-lg">
               <div
                 ref={rotateKnobRef}
-                className="knob-indicator w-1 h-8 bg-red-500 absolute top-0 left-1/2 transform -translate-x-1/2 origin-bottom"
+                className="knob-indicator w-1 h-9 bg-red-500 absolute top-2 left-1/2 transform -translate-x-1/2 origin-bottom"
                 style={{
                   transform: `rotate(${(volume / 100) * 270 - 135}deg)`,
                 }}
